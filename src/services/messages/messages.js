@@ -1,6 +1,8 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
 
+import { uploadFileMiddleware, multipartMiddlewareMessage } from '../../middlewares/upload-files-middleware.js'
+
 import { hooks as schemaHooks } from '@feathersjs/schema'
 import {
   messagesDataValidator,
@@ -13,9 +15,12 @@ import {
   messagesQueryResolver
 } from './messages.schema.js'
 import { MessagesService, getOptions } from './messages.class.js'
+import { messageCreateAroundHook } from '../../hooks/messages/message-create-around-hook.js'
+import { messageCreateBeforeHook } from '../../hooks/messages/message-create-before-hook.js'
+import { messageFindAroundHook } from '../../hooks/messages/message-find-around-hook.js'
 
 export const messagesPath = 'messages'
-export const messagesMethods = ['find', 'get', 'create', 'patch', 'remove']
+export const messagesMethods = ['find', 'create']
 
 export * from './messages.class.js'
 export * from './messages.schema.js'
@@ -27,7 +32,11 @@ export const messages = (app) => {
     // A list of all methods this service exposes externally
     methods: messagesMethods,
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    koa: {
+      before: [multipartMiddlewareMessage.single('file'), uploadFileMiddleware]
+    }
+
   })
   // Initialize hooks
   app.service(messagesPath).hooks({
@@ -36,6 +45,12 @@ export const messages = (app) => {
         authenticate('jwt'),
         schemaHooks.resolveExternal(messagesExternalResolver),
         schemaHooks.resolveResult(messagesResolver)
+      ],
+      create : [
+        messageCreateAroundHook
+      ],
+      find: [
+        messageFindAroundHook
       ]
     },
     before: {
@@ -47,7 +62,8 @@ export const messages = (app) => {
       get: [],
       create: [
         schemaHooks.validateData(messagesDataValidator),
-        schemaHooks.resolveData(messagesDataResolver)
+        schemaHooks.resolveData(messagesDataResolver),
+        messageCreateBeforeHook,
       ],
       patch: [
         schemaHooks.validateData(messagesPatchValidator),

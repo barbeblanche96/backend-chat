@@ -13,9 +13,13 @@ import {
   contactsQueryResolver
 } from './contacts.schema.js'
 import { ContactsService, getOptions } from './contacts.class.js'
+import { contactGetAroundHook } from '../../hooks/contacts/contact-get-around-hook.js'
+import { contactFindAroundHook } from '../../hooks/contacts/contact-find-around-hook.js'
+import { contactPatchAroundHook } from '../../hooks/contacts/contact-patch-around-hook.js'
+import { contactRemoveAroundHook } from '../../hooks/contacts/contact-remove-around-hook.js'
 
 export const contactsPath = 'contacts'
-export const contactsMethods = ['find', 'get', 'create', 'patch', 'remove']
+export const contactsMethods = ['find', 'get', 'patch', 'remove']
 
 export * from './contacts.class.js'
 export * from './contacts.schema.js'
@@ -36,6 +40,18 @@ export const contacts = (app) => {
         authenticate('jwt'),
         schemaHooks.resolveExternal(contactsExternalResolver),
         schemaHooks.resolveResult(contactsResolver)
+      ],
+      get: [
+        contactGetAroundHook
+      ],
+      find : [
+        contactFindAroundHook
+      ],
+      patch : [
+        contactPatchAroundHook
+      ],
+      remove : [
+        contactRemoveAroundHook
       ]
     },
     before: {

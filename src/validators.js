@@ -22,6 +22,8 @@ const formats = [
 
 export const dataValidator = addFormats(new Ajv({ useDefaults: true, messages: true, allowUnionTypes : true, allErrors: true }), formats)
 
+export const dataPatchValidator = addFormats(new Ajv({messages: true, allowUnionTypes : true, allErrors: true }), formats)
+
 export const queryValidator = addFormats(
   new Ajv({
     coerceTypes: true,
@@ -33,4 +35,5 @@ export const queryValidator = addFormats(
 )
 
 dataValidator.addKeyword(keywordObjectId)
+dataPatchValidator.addKeyword(keywordObjectId)
 queryValidator.addKeyword(keywordObjectId)

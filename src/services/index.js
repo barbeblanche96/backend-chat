@@ -1,3 +1,5 @@
+import { downloads } from './downloads/downloads.js'
+
 import { messages } from './messages/messages.js'
 
 import { discussions } from './discussions/discussions.js'
@@ -9,6 +11,8 @@ import { requests } from './requests/requests.js'
 import { user } from './users/users.js'
 
 export const services = (app) => {
+  app.configure(downloads)
+
   app.configure(messages)
 
   app.configure(discussions)

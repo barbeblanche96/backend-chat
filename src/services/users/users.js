@@ -1,6 +1,8 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
 import { authenticate } from '@feathersjs/authentication'
 
+import { uploadFileMiddleware, multipartMiddlewareImage } from '../../middlewares/upload-files-middleware.js'
+
 import { hooks as schemaHooks } from '@feathersjs/schema'
 import {
   userDataValidator,
@@ -28,7 +30,10 @@ export const user = (app) => {
     // A list of all methods this service exposes externally
     methods: userMethods,
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    koa: {
+      before: [multipartMiddlewareImage.single('file'), uploadFileMiddleware]
+    }
   })
   // Initialize hooks
   app.service(userPath).hooks({

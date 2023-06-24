@@ -53,6 +53,7 @@
     "@feathersjs/socketio": "^5.0.6",
     "@feathersjs/transport-commons": "^5.0.6",
     "@feathersjs/typebox": "^5.0.6",
+    "@koa/multer": "^3.0.2",
     "mongodb": "^5.6.0",
     "winston": "^3.9.0"
   },

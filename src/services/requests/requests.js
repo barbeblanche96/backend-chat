@@ -14,6 +14,10 @@ import {
 } from './requests.schema.js'
 import { RequestsService, getOptions } from './requests.class.js'
 import { requestCreateAroundHook } from '../../hooks/requests/request-create-around-hook.js'
+import { requestFindAroundHook } from '../../hooks/requests/request-find-around-hook.js'
+import { requestGetAroundHook } from '../../hooks/requests/request-get-around-hook.js'
+import { requestPatchAroundHook } from '../../hooks/requests/request-patch-around-hook.js'
+import { requestRemoveAroundHook } from '../../hooks/requests/request-remove-around-hook.js'
 
 export const requestsPath = 'requests'
 export const requestsMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -40,6 +44,18 @@ export const requests = (app) => {
       ],
       create : [
         requestCreateAroundHook,
+      ],
+      find: [
+        requestFindAroundHook
+      ],
+      get: [
+        requestGetAroundHook
+      ],
+      patch: [
+        requestPatchAroundHook,
+      ],
+      remove: [
+        requestRemoveAroundHook
       ]
     },
     before: {
@@ -47,8 +63,6 @@ export const requests = (app) => {
         schemaHooks.validateQuery(requestsQueryValidator),
         schemaHooks.resolveQuery(requestsQueryResolver)
       ],
-      find: [],
-      get: [],
       create: [
         schemaHooks.validateData(requestsDataValidator),
         schemaHooks.resolveData(requestsDataResolver)

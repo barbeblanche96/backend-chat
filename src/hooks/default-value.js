@@ -1,6 +1,5 @@
 export const defaultValue = async (context, next) => {
 
-  console.log(`Running hook default-value on ${context.path}.${context.method}`)
 
   const acceptedPathForDate = ['users', 'requests', 'discussions', 'messages', 'contacts']
 

@@ -16,10 +16,8 @@ export const channels = (app) => {
     // real-time connection, e.g. when logging in via REST
     if (connection) {
       // The connection is no longer anonymous, remove it
-      app.channel('anonymous').leave(connection)
+      app.channel(`userIds/${user._id.toString()}`).join(connection);
 
-      // Add it to the authenticated user channel
-      app.channel('authenticated').join(connection)
     }
   })
 
@@ -31,4 +29,7 @@ export const channels = (app) => {
     // e.g. to publish all service events to all authenticated users use
     return app.channel('authenticated')
   })
+
+
+
 }

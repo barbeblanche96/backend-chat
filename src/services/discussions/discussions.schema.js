@@ -2,7 +2,7 @@
 import { resolve } from '@feathersjs/schema'
 import { Type, getValidator, querySyntax } from '@feathersjs/typebox'
 import { ObjectIdSchema } from '@feathersjs/typebox'
-import { dataValidator, queryValidator } from '../../validators.js'
+import { dataPatchValidator, dataValidator, queryValidator } from '../../validators.js'
 
 // Main data model schema
 export const discussionsSchema = Type.Object(
@@ -10,7 +10,8 @@ export const discussionsSchema = Type.Object(
     _id: ObjectIdSchema(),
     tag: Type.Enum({PRIVATE : 'PRIVATE', GROUP: 'GROUP'}, {default : 'PRIVATE'}),
     name: Type.Union([Type.Null(), Type.String()], {default: null}),
-    description : Type.String(),
+    description : Type.Union([Type.Null(), Type.String()], {default: null}),
+    createdById : ObjectIdSchema(),
     participants: Type.Array(Type.Object({
       userId: ObjectIdSchema(),
       isAdmin: Type.Boolean({default: false}),
@@ -18,19 +19,29 @@ export const discussionsSchema = Type.Object(
       isArchivedChat: Type.Boolean({default: false}),
       addedAt : Type.Number()
     }), {minItems : 2}),
-    lastMessage: Type.Any(),
+    lastMessage: Type.Union([Type.Null(), Type.Any()], {default: null}),
     createdAt : Type.Number(),
     updatedAt : Type.Number(),
   },
   { $id: 'Discussions', additionalProperties: false }
 )
 export const discussionsValidator = getValidator(discussionsSchema, dataValidator)
-export const discussionsResolver = resolve({})
+export const discussionsResolver = resolve({
+  participants : async (value, discussion, context) => {
+    if(value) {
+      for (var idx = 0; idx < value.length; idx++) {
+        const user = await context.app.service('users').get(value[idx].userId, { query : {$select : ['_id', 'username', 'firstname', 'lastname', 'email']} });
+        value[idx].user = user;
+      }
+    }
+    return value;
+  }
+})
 
 export const discussionsExternalResolver = resolve({})
 
 // Schema for creating new entries
-export const discussionsDataSchema = Type.Pick(discussionsSchema, ['tag', 'name', 'description', 'participants', 'lastMessage', 'createdAt', 'updatedAt'], {
+export const discussionsDataSchema = Type.Pick(discussionsSchema, ['tag', 'name', 'description', 'participants', 'lastMessage', 'createdAt', 'updatedAt', 'createdById'], {
   $id: 'DiscussionsData'
 })
 export const discussionsDataValidator = getValidator(discussionsDataSchema, dataValidator)
@@ -44,7 +55,7 @@ export const discussionsDataResolver = resolve({
         }
       }
     }
-    return participants;
+    return value;
   }
 })
 
@@ -52,7 +63,7 @@ export const discussionsDataResolver = resolve({
 export const discussionsPatchSchema = Type.Partial(discussionsSchema, {
   $id: 'DiscussionsPatch'
 })
-export const discussionsPatchValidator = getValidator(discussionsPatchSchema, dataValidator)
+export const discussionsPatchValidator = getValidator(discussionsPatchSchema, dataPatchValidator)
 export const discussionsPatchResolver = resolve({
   participants : async (value, discussion, context) => {
     if(value) {
@@ -63,17 +74,19 @@ export const discussionsPatchResolver = resolve({
         }
       }
     }
-    return participants;
+    return value;
   }
 })
 
 // Schema for allowed query properties
-export const discussionsQueryProperties = Type.Pick(discussionsSchema, ['tag', 'name', 'participants', 'updatedAt'])
+export const discussionsQueryProperties = Type.Pick(discussionsSchema, ['_id', 'tag', 'name', 'participants', 'lastMessage', 'updatedAt', 'createdById'])
 export const discussionsQuerySchema = Type.Intersect(
   [
     querySyntax(discussionsQueryProperties),
     // Add additional query properties here
-    Type.Object({}, { additionalProperties: false })
+    Type.Object({
+      'participants.userId' : Type.Optional(ObjectIdSchema())
+    }, { additionalProperties: false })
   ],
   { additionalProperties: false }
 )

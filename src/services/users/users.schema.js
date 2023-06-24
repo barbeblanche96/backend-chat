@@ -3,7 +3,7 @@ import { resolve } from '@feathersjs/schema'
 import { Type, getValidator, querySyntax } from '@feathersjs/typebox'
 import { ObjectIdSchema } from '@feathersjs/typebox'
 import { passwordHash } from '@feathersjs/authentication-local'
-import { dataValidator, queryValidator } from '../../validators.js'
+import { dataPatchValidator, dataValidator, queryValidator } from '../../validators.js'
 import { BadRequest } from '@feathersjs/errors'
 
 // Main data model schema
@@ -68,7 +68,7 @@ export const userDataResolver = resolve({
 export const userPatchSchema = Type.Partial(userSchema, {
   $id: 'UserPatch'
 })
-export const userPatchValidator = getValidator(userPatchSchema, dataValidator)
+export const userPatchValidator = getValidator(userPatchSchema, dataPatchValidator)
 export const userPatchResolver = resolve({
   password: async (value, user, context) => {
     if (value) {
@@ -100,7 +100,7 @@ export const userPatchResolver = resolve({
 })
 
 // Schema for allowed query properties
-export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username', 'createdAt', 'updatedAt'])
+export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username', 'lastname', 'firstname', 'createdAt', 'updatedAt'])
 export const userQuerySchema = Type.Intersect(
   [
     querySyntax(userQueryProperties, {

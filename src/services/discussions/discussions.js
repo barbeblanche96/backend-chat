@@ -13,9 +13,13 @@ import {
   discussionsQueryResolver
 } from './discussions.schema.js'
 import { DiscussionsService, getOptions } from './discussions.class.js'
+import { discussionCreateAroundHook } from '../../hooks/discussions/discussion-create-around-hook.js'
+import { discussionFindAroundHook } from '../../hooks/discussions/discussion-find-around-hook.js'
+import { discussionPatchAroundHook } from '../../hooks/discussions/discussion-patch-around-hook.js'
+import { discussionGetAroundHook } from '../../hooks/discussions/discussion-get-around-hook.js'
 
 export const discussionsPath = 'discussions'
-export const discussionsMethods = ['find', 'get', 'create', 'patch', 'remove']
+export const discussionsMethods = ['find', 'get', 'create', 'patch']
 
 export * from './discussions.class.js'
 export * from './discussions.schema.js'
@@ -36,6 +40,18 @@ export const discussions = (app) => {
         authenticate('jwt'),
         schemaHooks.resolveExternal(discussionsExternalResolver),
         schemaHooks.resolveResult(discussionsResolver)
+      ],
+      create: [
+        discussionCreateAroundHook
+      ],
+      find: [
+        discussionFindAroundHook
+      ],
+      patch : [
+        discussionPatchAroundHook
+      ],
+      get : [
+        discussionGetAroundHook
       ]
     },
     before: {
@@ -43,7 +59,6 @@ export const discussions = (app) => {
         schemaHooks.validateQuery(discussionsQueryValidator),
         schemaHooks.resolveQuery(discussionsQueryResolver)
       ],
-      find: [],
       get: [],
       create: [
         schemaHooks.validateData(discussionsDataValidator),

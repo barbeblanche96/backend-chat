@@ -1,8 +1,8 @@
 // // For more information about this file see https://dove.feathersjs.com/guides/cli/service.schemas.html
-import { resolve } from '@feathersjs/schema'
+import { resolve, virtual } from '@feathersjs/schema'
 import { Type, getValidator, querySyntax } from '@feathersjs/typebox'
 import { ObjectIdSchema } from '@feathersjs/typebox'
-import { dataValidator, queryValidator } from '../../validators.js'
+import { dataPatchValidator, dataValidator, queryValidator } from '../../validators.js'
 import { BadRequest } from '@feathersjs/errors'
 
 // Main data model schema
@@ -19,7 +19,18 @@ export const requestsSchema = Type.Object(
   { $id: 'Requests', additionalProperties: false }
 )
 export const requestsValidator = getValidator(requestsSchema, dataValidator)
-export const requestsResolver = resolve({})
+export const requestsResolver = resolve({
+  sender: virtual(async (request, context) => {
+    return await context.app.service('users').get(request.senderId, { query : {
+      $select: ['lastname', 'firstname', 'email', 'username']
+    }})
+  }),
+  receiver: virtual(async (request, context) => {
+    return await context.app.service('users').get(request.receiverId, { query : {
+      $select: ['lastname', 'firstname', 'email', 'username']
+    }})
+  }),
+})
 
 export const requestsExternalResolver = resolve({})
 
@@ -54,7 +65,7 @@ export const requestsDataResolver = resolve({
 export const requestsPatchSchema = Type.Partial(requestsSchema, {
   $id: 'RequestsPatch'
 })
-export const requestsPatchValidator = getValidator(requestsPatchSchema, dataValidator)
+export const requestsPatchValidator = getValidator(requestsPatchSchema, dataPatchValidator)
 export const requestsPatchResolver = resolve({
   receiverId: async (value, request, context) => {
     if (value) {
@@ -77,7 +88,7 @@ export const requestsPatchResolver = resolve({
 })
 
 // Schema for allowed query properties
-export const requestsQueryProperties = Type.Pick(requestsSchema, ['senderId', 'receiverId', 'accepted', 'updatedAt'])
+export const requestsQueryProperties = Type.Pick(requestsSchema, ['_id', 'senderId', 'receiverId', 'accepted', 'updatedAt'])
 export const requestsQuerySchema = Type.Intersect(
   [
     querySyntax(requestsQueryProperties),
