@@ -21,6 +21,15 @@ app.configure(configuration(configurationValidator))
 
 // Set up Koa middleware
 app.use(cors())
+app.use(function (ctx, next) {
+  const folderToAccess = ctx.originalUrl.toString().split('/')
+  if (Array.isArray(folderToAccess) && folderToAccess.length >= 2) {
+    if (['uploads'].includes(folderToAccess[1])) {
+      return ctx.throw(401, 'You can not access this resources')
+    }
+  }
+  return next()
+})
 app.use(serveStatic(app.get('public')))
 app.use(errorHandler())
 app.use(parseAuthentication())
@@ -31,16 +40,18 @@ app.configure(rest())
 app.configure(
   socketio({
     cors: {
-      origin: app.get('origins')
+      origin: '*'
     }
   })
 )
-app.configure(channels)
+
 app.configure(mongodb)
 
 app.configure(authentication)
 
 app.configure(services)
+
+app.configure(channels)
 
 // Register hooks that run on all service methods
 app.hooks({

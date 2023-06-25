@@ -16,6 +16,7 @@ import {
 } from './users.schema.js'
 import { UserService, getOptions } from './users.class.js'
 import { userPatchAroundHook } from '../../hooks/users/user-patch-around-hook.js'
+import { userPatchBeforeHook } from '../../hooks/users/user-patch-before-hook.js'
 
 export const userPath = 'users'
 export const userMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -51,7 +52,7 @@ export const user = (app) => {
       find: [],
       get: [],
       create: [context => console.log(context.data), schemaHooks.validateData(userDataValidator), schemaHooks.resolveData(userDataResolver)],
-      patch: [schemaHooks.validateData(userPatchValidator), schemaHooks.resolveData(userPatchResolver)],
+      patch: [schemaHooks.validateData(userPatchValidator), schemaHooks.resolveData(userPatchResolver), userPatchBeforeHook],
       remove: []
     },
     after: {

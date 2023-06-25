@@ -6,6 +6,7 @@ export class MessagesService extends MongoDBService {}
 export const getOptions = (app) => {
   return {
     paginate: app.get('paginate'),
+    multi: ['remove'],
     Model: app.get('mongodbClient').then((db) => db.collection('messages'))
   }
 }

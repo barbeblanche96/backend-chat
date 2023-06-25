@@ -34,7 +34,7 @@ export const messageCreateAroundHook = async (context, next) => {
     }
   }
 
-  context.app.service('discussions').patch(context.result.discussionId, {
+  discussion = await context.app.service('discussions').patch(context.result.discussionId, {
     lastMessage : {
       senderId, 
       text, 
@@ -44,4 +44,5 @@ export const messageCreateAroundHook = async (context, next) => {
     participants : discussion.participants
   });
 
+  context.result.discussion = discussion
 }

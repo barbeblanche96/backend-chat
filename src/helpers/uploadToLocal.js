@@ -1,16 +1,14 @@
 import { GeneralError } from '@feathersjs/errors/lib/index.js'
 import { promises as fs } from 'fs'
 
-export const uploadToLocal = async (originalname, fileBuffer, prefix = '0') => {
+export const uploadToLocal = async (originalname, fileBuffer, prefix = '0', folder = 'public/uploads') => {
   const ts = new Date().getTime()
-
-  var uploadFolderPath = 'public/uploads';
 
   var finalPath = null;
 
-  await fs.mkdir(uploadFolderPath, { recursive: true });
+  await fs.mkdir(folder, { recursive: true });
 
-  if (!uploadFolderPath) {
+  if (!folder) {
     throw new GeneralError('Impossible to locate saving files folder')
   }
 
@@ -26,8 +24,8 @@ export const uploadToLocal = async (originalname, fileBuffer, prefix = '0') => {
       .replace(/-+/g, '')
 
   try {
-    await fs.writeFile(uploadFolderPath + '/' + filename, fileBuffer)
-    finalPath = uploadFolderPath.slice('public/'.length) + '/' + filename
+    await fs.writeFile(folder + '/' + filename, fileBuffer)
+    finalPath = folder.slice('public/'.length) + '/' + filename
   } catch (error) {
     console.log(error)
     return false

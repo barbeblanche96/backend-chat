@@ -2,6 +2,7 @@
 import { authenticate } from '@feathersjs/authentication'
 import { DownloadsService, getOptions } from './downloads.class.js'
 import { downloadFileMiddleware } from '../../middlewares/download-files-middleware.js'
+import { BadRequest } from '@feathersjs/errors'
 
 export const downloadsPath = 'downloads'
 export const downloadsMethods = ['find']
@@ -43,7 +44,7 @@ export const downloads = (app) => {
 
           if (context.params?.user) {
             if (message.discussionId) {
-              const discussion = await context.app.service('messages').get(message.discussionId);
+              const discussion = await context.app.service('discussions').get(message.discussionId);
               const findUser = discussion.participants.find(
                 (participant) => participant.userId.toString() == context.params.user._id.toString()
               )

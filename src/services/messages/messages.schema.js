@@ -30,12 +30,12 @@ export const messagesValidator = getValidator(messagesSchema, dataValidator)
 export const messagesResolver = resolve({
   sender: virtual(async (message, context) => {
     return await context.app.service('users').get(message.senderId, { query : {
-      $select: ['lastname', 'firstname', 'email', 'username']
+      $select: ['_id', 'lastname', 'firstname', 'email', 'username']
     }})
   }),
   responseToMessage: virtual(async (message, context) => {
     return message.responseToMessageId ? await context.app.service('messages').get(message.responseToMessageId, { query : {
-      $select: ['text', 'file']
+      $select: ['_id','text', 'file']
     }}) : null;
   }),
 })

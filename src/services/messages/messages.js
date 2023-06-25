@@ -18,9 +18,10 @@ import { MessagesService, getOptions } from './messages.class.js'
 import { messageCreateAroundHook } from '../../hooks/messages/message-create-around-hook.js'
 import { messageCreateBeforeHook } from '../../hooks/messages/message-create-before-hook.js'
 import { messageFindAroundHook } from '../../hooks/messages/message-find-around-hook.js'
+import { messagePatchAroundHook } from '../../hooks/messages/message-patch-around-hook.js'
 
 export const messagesPath = 'messages'
-export const messagesMethods = ['find', 'create']
+export const messagesMethods = ['find', 'create', 'patch']
 
 export * from './messages.class.js'
 export * from './messages.schema.js'
@@ -51,6 +52,9 @@ export const messages = (app) => {
       ],
       find: [
         messageFindAroundHook
+      ],
+      patch: [
+        messagePatchAroundHook
       ]
     },
     before: {

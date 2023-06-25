@@ -17,9 +17,10 @@ import { discussionCreateAroundHook } from '../../hooks/discussions/discussion-c
 import { discussionFindAroundHook } from '../../hooks/discussions/discussion-find-around-hook.js'
 import { discussionPatchAroundHook } from '../../hooks/discussions/discussion-patch-around-hook.js'
 import { discussionGetAroundHook } from '../../hooks/discussions/discussion-get-around-hook.js'
+import { discussionRemoveAroundHook } from '../../hooks/discussions/discussion-remove-around-hook.js'
 
 export const discussionsPath = 'discussions'
-export const discussionsMethods = ['find', 'get', 'create', 'patch']
+export const discussionsMethods = ['find', 'get', 'create', 'patch', 'remove']
 
 export * from './discussions.class.js'
 export * from './discussions.schema.js'
@@ -52,6 +53,9 @@ export const discussions = (app) => {
       ],
       get : [
         discussionGetAroundHook
+      ],
+      remove: [
+        discussionRemoveAroundHook
       ]
     },
     before: {

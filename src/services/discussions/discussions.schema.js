@@ -82,7 +82,16 @@ export const discussionsPatchResolver = resolve({
 export const discussionsQueryProperties = Type.Pick(discussionsSchema, ['_id', 'tag', 'name', 'participants', 'lastMessage', 'updatedAt', 'createdById'])
 export const discussionsQuerySchema = Type.Intersect(
   [
-    querySyntax(discussionsQueryProperties),
+    querySyntax(discussionsQueryProperties, {
+      participants: {
+        $elemMatch: Type.Object({
+          userId: Type.Optional(ObjectIdSchema()),
+          isAdmin: Type.Optional(Type.Boolean()),
+          hasNewNotif: Type.Optional(Type.Boolean()),
+          isArchivedChat: Type.Optional(Type.Boolean()),
+        }),
+      }
+    }),
     // Add additional query properties here
     Type.Object({
       'participants.userId' : Type.Optional(ObjectIdSchema())

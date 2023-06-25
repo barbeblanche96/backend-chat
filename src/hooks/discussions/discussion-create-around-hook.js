@@ -2,6 +2,8 @@ import { BadRequest } from "@feathersjs/errors";
 
 export const discussionCreateAroundHook = async (context, next) => {
 
+  const nowDate = Date.now();
+
   if (context.params?.user) {
 
     if (!context.data?.tag || !['PRIVATE', 'GROUP'].includes(context.data.tag)){
@@ -51,9 +53,6 @@ export const discussionCreateAroundHook = async (context, next) => {
         throw new BadRequest("This discussion already exist")
       }*/
 
-
-      const nowDate = Date.now();
-
       if (context.params.user._id.toString() === userId.toString()) {
         throw new BadRequest('You can chat with yourself');
       }
@@ -93,34 +92,15 @@ export const discussionCreateAroundHook = async (context, next) => {
 
       participants = [...new Set(participants)];
 
-      if (participants < 3) {
+      if (participants.length < 3) {
         throw new BadRequest('Discussion group must have at least 3 participants');
       }
-
-      const existContacts = await context.app.service("contacts").find({ query : {
-        $or : [
-          {userId1 : context.params.user._id},
-          {userId2 : context.params.user._id}
-        ], 
-        blockedUser1: false,
-        blockedUser2: false,
-        $select: ['_id'],
-        $paginate : false 
-      }});
-
-      for(var idx = 0; idx < existContacts.length; idx++) {
-        if(context.params.user._id.toString() != existContacts[idx].toString() && 
-        !participants.includes(existContacts[idx].toString())) {
-          throw new BadRequest("You can not add participant "+existContacts[idx].toString());
-        }
-      }
-
       
       var finalParticipants = [];
 
       participants.forEach(element => {
         finalParticipants.push({
-          userId: participants,
+          userId: element,
           isAdmin: context.params.user._id.toString() === element.toString() ? true : false,
           hasNewNotif: true,
           addedAt : nowDate,
@@ -129,7 +109,7 @@ export const discussionCreateAroundHook = async (context, next) => {
 
       context.data.participants = finalParticipants;
 
-      context.createdById = context.params.user._id;
+      context.data.createdById = context.params.user._id;
    
     }
 

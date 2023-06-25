@@ -30,6 +30,31 @@ export const channels = (app) => {
     return app.channel('authenticated')
   })
 
+  app.service('discussions').publish((data, context) => {
+    let returnChannels = [];
+
+    if(data.participants) {
+      data.participants.forEach(participant => {
+        returnChannels.push(app.channel(`userIds/${participant.userId.toString()}`));
+      });
+    }
+
+    return returnChannels;
+  })
+
+  app.service('messages').publish((data, context) => {
+    let returnChannels = [];
+
+    if (data.discussion) {
+      for (let i = 0; i < data.discussion.participants.length; i++) {
+        returnChannels.push(app.channel(`userIds/${data.discussion.participants[i].userId.toString()}`));
+      }
+    }
+
+    return returnChannels
+  })
+
+
 
 
 }
