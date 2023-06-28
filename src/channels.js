@@ -14,6 +14,8 @@ export const channels = (app) => {
   app.on('login', (authResult, { connection }) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
+    const user = authResult.user;
+
     if (connection) {
       // The connection is no longer anonymous, remove it
       app.channel(`userIds/${user._id.toString()}`).join(connection);

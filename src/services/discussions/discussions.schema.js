@@ -93,9 +93,9 @@ export const discussionsQuerySchema = Type.Intersect(
       }
     }),
     // Add additional query properties here
-    Type.Object({
+    querySyntax(Type.Object({
       'participants.userId' : Type.Optional(ObjectIdSchema())
-    }, { additionalProperties: false })
+    }, { additionalProperties: false }))
   ],
   { additionalProperties: false }
 )

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test socket</title>
+</head>
+<body>
+    <h1>Tester les sockets</h1>
+</body>
+
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+<script>
+
+    const socket = io('http://localhost:3030');
+
+    // you have to login via socket before received message and discussion sockets events
+    socket.on('connect', function(){
+        // connected user to socket via jwt
+        socket.emit('create', 'authentication', {
+            strategy: "jwt",
+            accessToken : "eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyJ9.eyJpYXQiOjE2ODc2MDI5OTIsImV4cCI6MTY5MDE5NDk5MiwiYXVkIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsInN1YiI6IjY0OGQ4ZTFhMWRkM2Q3OWY5NjA2NjhlNCIsImp0aSI6IjllYTMwNDdmLWNkNjktNGY2MC04ODQwLTc5ZGFlZTQ0NDg2NCJ9.KT9ntfRZrOpwuHKIgLDBebP1xZkG3PB5a9uowgrx4qo",
+        }, function(error, authResult) {
+            console.log(authResult); 
+            // retrieve user connected infos
+        });
+    });
+
+    // Received event for created message
+    socket.on('messages created', function(data){
+        console.log(data)
+    });
+
+    // Received event for discussion created (when you are adding to new discussion)
+    socket.on('discussions created', function(data){
+        console.log(data)
+    });
+
+    // Received event for discussion patched (when you are receiving update on new discussion)
+    socket.on('discussions patched', function(data){
+        console.log(data)
+    });
+
+
+</script>
+
+</html>

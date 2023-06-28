@@ -57,6 +57,9 @@ This project uses [Feathers](http://feathersjs.com). An open source framework fo
 
 6. Check backend documentation at this [Link](https://documenter.getpostman.com/view/3550891/2s93si1A3q)
 
+
+7. Check the test.html file to know how to receive sockets events (you have to login via socket before receiving event)
+
 ## Testing
 
 Run `npm test` and all your tests in the `test/` directory will be run.

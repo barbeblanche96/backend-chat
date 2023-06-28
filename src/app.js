@@ -45,6 +45,17 @@ app.configure(
   })
 )
 
+// configure sync for scaling
+/*app.configure(
+  sync({
+    uri: process.env.REDIS_URI,
+    redisOptions: { return_buffers: true },
+    serialize: stringify,
+    deserialize: parse
+  })
+)*/
+
+
 app.configure(mongodb)
 
 app.configure(authentication)

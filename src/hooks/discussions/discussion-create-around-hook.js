@@ -37,7 +37,9 @@ export const discussionCreateAroundHook = async (context, next) => {
       // verify if this discussion already exist
       // A revoir
 
-      /*const existDiscussion = await context.app.service("discussions").find({ query : {
+      const existDiscussion = await context.app.service("discussions").find({ query : {
+        tag: 'PRIVATE',
+        $select : ['_id'],
         $and : [
           {
             'participants.userId' : context.params.user._id,
@@ -49,9 +51,9 @@ export const discussionCreateAroundHook = async (context, next) => {
         $limit :1 
       }});
 
-      if (!existDiscussion.data || existDiscussion.data.length < 1 ) {
+      if (existDiscussion.data && existDiscussion.data.length > 0 ) {
         throw new BadRequest("This discussion already exist")
-      }*/
+      }
 
       if (context.params.user._id.toString() === userId.toString()) {
         throw new BadRequest('You can chat with yourself');
