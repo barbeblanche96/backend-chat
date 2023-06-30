@@ -22,12 +22,12 @@ export const contactsValidator = getValidator(contactsSchema, dataValidator)
 export const contactsResolver = resolve({
   user1: virtual(async (contact, context) => {
     return await context.app.service('users').get(contact.userId1, { query : {
-      $select: ['_id','lastname', 'firstname', 'email', 'username']
+      $select: ['_id','lastname', 'firstname', 'email', 'username', 'photoUrl']
     }})
   }),
   user2: virtual(async (contact, context) => {
     return await context.app.service('users').get(contact.userId2, { query : {
-      $select: ['_id', 'lastname', 'firstname', 'email', 'username']
+      $select: ['_id', 'lastname', 'firstname', 'email', 'username', 'photoUrl']
     }})
   }),
 })

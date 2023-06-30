@@ -22,12 +22,12 @@ export const requestsValidator = getValidator(requestsSchema, dataValidator)
 export const requestsResolver = resolve({
   sender: virtual(async (request, context) => {
     return await context.app.service('users').get(request.senderId, { query : {
-      $select: ['lastname', 'firstname', 'email', 'username']
+      $select: ['lastname', 'firstname', 'email', 'username', 'photoUrl']
     }})
   }),
   receiver: virtual(async (request, context) => {
     return await context.app.service('users').get(request.receiverId, { query : {
-      $select: ['lastname', 'firstname', 'email', 'username']
+      $select: ['lastname', 'firstname', 'email', 'username', 'photoUrl']
     }})
   }),
 })

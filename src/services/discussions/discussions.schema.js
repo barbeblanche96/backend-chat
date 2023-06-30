@@ -30,7 +30,7 @@ export const discussionsResolver = resolve({
   participants : async (value, discussion, context) => {
     if(value) {
       for (var idx = 0; idx < value.length; idx++) {
-        const user = await context.app.service('users').get(value[idx].userId, { query : {$select : ['_id', 'username', 'firstname', 'lastname', 'email']} });
+        const user = await context.app.service('users').get(value[idx].userId, { query : {$select : ['_id', 'username', 'firstname', 'lastname', 'email', 'photoUrl']} });
         value[idx].user = user;
       }
     }

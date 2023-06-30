@@ -100,7 +100,7 @@ export const userPatchResolver = resolve({
 })
 
 // Schema for allowed query properties
-export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username', 'lastname', 'firstname', 'createdAt', 'updatedAt'])
+export const userQueryProperties = Type.Pick(userSchema, ['_id', 'email', 'username', 'photoUrl', 'lastname', 'firstname', 'createdAt', 'updatedAt'])
 export const userQuerySchema = Type.Intersect(
   [
     querySyntax(userQueryProperties, {
