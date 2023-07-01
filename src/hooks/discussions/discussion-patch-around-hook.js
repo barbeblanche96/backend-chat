@@ -16,7 +16,7 @@ export const discussionPatchAroundHook = async (context, next) => {
       throw new BadRequest("You can not patch this discussion");
     }
 
-    const possibleActions = ['ARCHIVED', 'UPDATE_GROUP_INFO', 'REMOVE_USERS_GROUP', 'ADD_USERS_GROUP', 'DEFINE_ADMINS_GROUP', 'LEAVE_GROUP']
+    const possibleActions = ['ARCHIVED', 'UPDATE_GROUP_INFO', 'REMOVE_USERS_GROUP', 'ADD_USERS_GROUP', 'DEFINE_ADMINS_GROUP', 'LEAVE_GROUP', 'OPEN_DISCUSSION']
 
     if (!context.data.action || !possibleActions.includes(context.data.action)) {
       throw new BadRequest("Invalid action");
@@ -59,8 +59,24 @@ export const discussionPatchAroundHook = async (context, next) => {
       context.data = {
         updatedAt: Date.now(),
         participants: filterParticipants.map((e) => { delete e.user; return e; })
+    }
+
+    }
+
+
+    else if (context.data.action === 'OPEN_DISCUSSION') {
+
+      for (var idx = 0; idx < discussion.participants.length; idx++) {
+        if (discussion.participants[idx].userId.toString() === context.params.user._id.toString()) {
+          discussion.participants[idx].hasNewNotif = false;
+          break;
+        }
       }
 
+      context.data = {
+        updatedAt: Date.now(),
+        participants: discussion.participants.map((e) => { delete e.user; return e; })
+      }
     }
 
 
